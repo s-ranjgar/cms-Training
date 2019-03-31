@@ -1,0 +1,14 @@
+{
+  "name": "cms",
+  "version": "1.0.0",
+  "description": "S CMS in NODE.js",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "CMS"
+  ],
+  "author": "Shabnam Ranjgar",
+  "license": "ISC"
+}
