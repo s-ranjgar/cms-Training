@@ -16,10 +16,10 @@ mongoose.connect(connectionString, {useNewUrlParser: true}).then(db => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const {select} = require('./helpers/handlebars-helpers');
+const {select,generateTime} = require('./helpers/handlebars-helpers');
 
 //Set View Engines
-app.engine('handlebars', exphbs({defaultLayout: 'home', helpers: {select: select}}));
+app.engine('handlebars', exphbs({defaultLayout: 'home', helpers: {select: select, generateTime: generateTime}}));
 app.set('view engine', 'handlebars');
 
 //Upload Middleware

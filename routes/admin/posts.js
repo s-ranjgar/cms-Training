@@ -101,6 +101,18 @@ router.put('/edit/:id', (req, res) => {
         post.status = req.body.status;
         post.allowComments = allowComments;
         post.body = req.body.body;
+
+        if (!isEmpty(req.files)) {
+
+            let file = req.files.file;
+            let filename = Date.now() + '-' + file.name;
+            post.file = filename;
+
+            file.mv('./public/uploads/' + filename, (err) => {
+                if (err) throw err;
+            });
+        }
+
         post.save().then(updatedPost => {
             req.flash('success_message',`${updatedPost.title} was Updated Successfully`);
             res.redirect('/admin/posts');
