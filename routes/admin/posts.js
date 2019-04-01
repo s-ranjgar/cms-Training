@@ -68,7 +68,8 @@ router.post('/create', (req, res) => {
         });
 
         newPost.save().then(savedPost => {
-            console.log(`Saved Post: ${savedPost}`);
+            // console.log(`Saved Post: ${savedPost}`);
+            req.flash('success_message',`${savedPost.title} was Created Successfully`);
             res.redirect('/admin/posts')
         }).catch(validator => {
             res.render('admin/posts/create',{errors:validator.errors});
@@ -101,6 +102,7 @@ router.put('/edit/:id', (req, res) => {
         post.allowComments = allowComments;
         post.body = req.body.body;
         post.save().then(updatedPost => {
+            req.flash('success_message',`${updatedPost.title} was Updated Successfully`);
             res.redirect('/admin/posts');
         }).catch(err => res.status(400).send(`COULD NOT SAVE BECAUSE: ${err}`));
     });
@@ -108,6 +110,7 @@ router.put('/edit/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
     Post.findByIdAndDelete(req.params.id).then(deletedPost => {
+        req.flash('success_message',`${deletedPost.title} was Deleted Successfully`);
         res.redirect('/admin/posts');
     }).catch(err => res.status(400).send(`COULD NOT DELETE POST BECAUSE: ${err}`));
 });

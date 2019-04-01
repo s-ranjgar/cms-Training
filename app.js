@@ -5,6 +5,8 @@ const exphbs = require('express-handlebars');
 const bodyParser = require('body-parser');
 const methodOverride = require('method-override');
 const upload = require('express-fileupload');
+const session = require('express-session');
+const flash = require('connect-flash');
 
 const mongoose = require("mongoose");
 const connectionString = 'mongodb://localhost:27017/cms';
@@ -29,6 +31,19 @@ app.use(bodyParser.json());
 
 //Method Override
 app.use(methodOverride('_method'));
+
+app.use(session({
+    secret:'edwindiaz123',
+    resave :true,
+    saveUninitialized:true
+}));
+app.use(flash());
+
+//Local Variables using Middleware
+app.use((req,res,next)=>{
+    res.locals.success_message=req.flash('success_message');
+    next();
+});
 
 //Load Routes
 const home = require('./routes/home/index');
