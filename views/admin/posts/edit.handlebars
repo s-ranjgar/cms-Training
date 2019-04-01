@@ -3,7 +3,7 @@
 <form action="/admin/posts/edit/{{post.id}}?_method=PUT" method="post" >
     <div class="form-group">
         <label for="title">Title</label>
-        <input name="title" type="text" class="form-control" id="title" placeholder="Enter Title" value="{{post.title}}">
+        <input name="title" type="text" class="form-control" id="title" placeholder="Enter Title" value="{{post.title}}" required>
     </div>
     <div class="form-group">
         <label for="status">Status</label>
@@ -21,13 +21,13 @@
     </div>
     <div class="form-check">
         <label for="allowComments" class="form-check-label">
-        <input name="allowComments" type="checkbox" class="form-check-input" id="allowComments" {{#if post.allowComments}} checked="checked" {{/if}}>
+        <input name="allowComments" type="checkbox" class="form-check-input" id="allowComments" {{#if post.allowComments}} checked="checked" {{/if}} >
             AllowComments
         </label>
     </div>
     <div class="form-group">
         <label for="body">Body</label>
-        <textarea name="body" cols="30" rows="10" class="form-control" id="body" placeholder="Enter Description" >{{post.body}}</textarea>
+        <textarea name="body" cols="30" rows="10" class="form-control" id="body" placeholder="Enter Description" required >{{post.body}}</textarea>
     </div>
     <button type="submit" class="btn-primary">Submit</button>
 </form>

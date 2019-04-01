@@ -24,35 +24,57 @@ router.get('/create', (req, res) => {
 router.post('/create', (req, res) => {
     // res.send('It works...')
 
-    let allowComments = false;
-    if (req.body.allowComments) {
-        allowComments = true;
+    let errors = [];
+    if(!req.body.title){
+        errors.push({message: 'please add a Title'});
     }
 
+    if(!req.body.status){
+        errors.push({message: 'please add a Status'});
+    }
 
-    let filename = '';
-    if (!isEmpty(req.files)) {
+    if(!req.body.body){
+        errors.push({message: 'please add a Body'});
+    }
 
-        let file = req.files.file;
-        filename = Date.now() + '-' + file.name;
+    if(errors.length>0)
+    {
+        res.render('admin/posts/create',{errors:errors});
+    }else {
 
-        file.mv('./public/uploads/' + filename, (err) => {
-            if (err) throw err;
+        let allowComments = false;
+        if (req.body.allowComments) {
+            allowComments = true;
+        }
+
+
+        let filename = '';
+        if (!isEmpty(req.files)) {
+
+            let file = req.files.file;
+            filename = Date.now() + '-' + file.name;
+
+            file.mv('./public/uploads/' + filename, (err) => {
+                if (err) throw err;
+            });
+        }
+
+        let newPost = new Post({
+            title: req.body.title,
+            status: req.body.status,
+            allowComments: allowComments,
+            body: req.body.body,
+            file: filename
+        });
+
+        newPost.save().then(savedPost => {
+            console.log(`Saved Post: ${savedPost}`);
+            res.redirect('/admin/posts')
+        }).catch(validator => {
+            res.render('admin/posts/create',{errors:validator.errors});
+            // console.log(`COULD NOT SAVE POST BECAUSE: ${validator}`);
         });
     }
-
-    let newPost = new Post({
-        title: req.body.title,
-        status: req.body.status,
-        allowComments: allowComments,
-        body: req.body.body,
-        file: filename
-    });
-
-    newPost.save().then(savedPost => {
-        console.log(`Saved Post: ${savedPost}`);
-        res.redirect('/admin/posts')
-    }).catch(err => console.log(`COULD NOT SAVE POST BECAUSE: ${err}`));
 });
 
 router.get('/edit/:id', (req, res) => {
