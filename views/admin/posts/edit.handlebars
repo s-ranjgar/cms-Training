@@ -1,0 +1,33 @@
+<h1>Create Post</h1>
+
+<form action="/admin/posts/edit/{{post.id}}?_method=PUT" method="post" >
+    <div class="form-group">
+        <label for="title">Title</label>
+        <input name="title" type="text" class="form-control" id="title" placeholder="Enter Title" value="{{post.title}}">
+    </div>
+    <div class="form-group">
+        <label for="status">Status</label>
+
+        <select name="status" id="status" class="form-control">
+            <!--<option value="public" {{#if post.status }}==="public" selected="selected" {{/if}} >Public</option>-->
+            <!--<option value="private" {{#if post.status }}==="private" selected="selected"{{/if}} >Private</option>-->
+            <!--<option value="draft" {{#if post.status }}==="draft" selected="selected"{{/if}} >Draft</option>-->
+            {{#select post.status}}
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+            <option value="draft">Draft</option>
+            {{/select}}
+        </select>
+    </div>
+    <div class="form-check">
+        <label for="allowComments" class="form-check-label">
+        <input name="allowComments" type="checkbox" class="form-check-input" id="allowComments" {{#if post.allowComments}} checked="checked" {{/if}}>
+            AllowComments
+        </label>
+    </div>
+    <div class="form-group">
+        <label for="body">Body</label>
+        <textarea name="body" cols="30" rows="10" class="form-control" id="body" placeholder="Enter Description" >{{post.body}}</textarea>
+    </div>
+    <button type="submit" class="btn-primary">Submit</button>
+</form>
