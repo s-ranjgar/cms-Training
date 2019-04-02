@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Post = require('../../models/Post');
+const Category = require('../../models/Category');
 const {isEmpty} = require('../../helpers/upload-helper');
 
 router.all('/*', (req, res, next) => {
@@ -9,7 +10,7 @@ router.all('/*', (req, res, next) => {
 });
 
 router.get('/', (req, res) => {
-    Post.find({}).then(posts => {
+    Post.find({}).populate('category').then(posts => {
 
         res.render('admin/posts', {posts: posts});
 
@@ -18,29 +19,30 @@ router.get('/', (req, res) => {
 
 router.get('/create', (req, res) => {
     //res.send('It works...');
-    res.render('admin/posts/create');
+    Category.find({}).then(categories => {
+        res.render('admin/posts/create', {categories: categories});
+    })
 });
 
 router.post('/create', (req, res) => {
     // res.send('It works...')
 
     let errors = [];
-    if(!req.body.title){
+    if (!req.body.title) {
         errors.push({message: 'please add a Title'});
     }
 
-    if(!req.body.status){
+    if (!req.body.status) {
         errors.push({message: 'please add a Status'});
     }
 
-    if(!req.body.body){
+    if (!req.body.body) {
         errors.push({message: 'please add a Body'});
     }
 
-    if(errors.length>0)
-    {
-        res.render('admin/posts/create',{errors:errors});
-    }else {
+    if (errors.length > 0) {
+        res.render('admin/posts/create', {errors: errors});
+    } else {
 
         let allowComments = false;
         if (req.body.allowComments) {
@@ -64,15 +66,16 @@ router.post('/create', (req, res) => {
             status: req.body.status,
             allowComments: allowComments,
             body: req.body.body,
-            file: filename
+            file: filename,
+            category: req.body.category
         });
 
         newPost.save().then(savedPost => {
             // console.log(`Saved Post: ${savedPost}`);
-            req.flash('success_message',`${savedPost.title} was Created Successfully`);
+            req.flash('success_message', `${savedPost.title} was Created Successfully`);
             res.redirect('/admin/posts')
         }).catch(validator => {
-            res.render('admin/posts/create',{errors:validator.errors});
+            res.render('admin/posts/create', {errors: validator.errors});
             // console.log(`COULD NOT SAVE POST BECAUSE: ${validator}`);
         });
     }
@@ -81,8 +84,9 @@ router.post('/create', (req, res) => {
 router.get('/edit/:id', (req, res) => {
     // res.send('It works...');
     Post.findById(req.params.id).then(post => {
-
-        res.render('admin/posts/edit', {post: post});
+        Category.find({}).then(categories => {
+            res.render('admin/posts/edit', {post: post, categories: categories});
+        });
 
     });
 
@@ -101,6 +105,7 @@ router.put('/edit/:id', (req, res) => {
         post.status = req.body.status;
         post.allowComments = allowComments;
         post.body = req.body.body;
+        post.category = req.body.category;
 
         if (!isEmpty(req.files)) {
 
@@ -114,7 +119,7 @@ router.put('/edit/:id', (req, res) => {
         }
 
         post.save().then(updatedPost => {
-            req.flash('success_message',`${updatedPost.title} was Updated Successfully`);
+            req.flash('success_message', `${updatedPost.title} was Updated Successfully`);
             res.redirect('/admin/posts');
         }).catch(err => res.status(400).send(`COULD NOT SAVE BECAUSE: ${err}`));
     });
@@ -122,7 +127,7 @@ router.put('/edit/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
     Post.findByIdAndDelete(req.params.id).then(deletedPost => {
-        req.flash('success_message',`${deletedPost.title} was Deleted Successfully`);
+        req.flash('success_message', `${deletedPost.title} was Deleted Successfully`);
         res.redirect('/admin/posts');
     }).catch(err => res.status(400).send(`COULD NOT DELETE POST BECAUSE: ${err}`));
 });

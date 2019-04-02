@@ -5,6 +5,10 @@ const PostSchema = new Schema({
     // user:{
     //
     // },
+    category:{
+        type:Schema.Types.ObjectId,
+        ref:'categories'
+    },
     title:{
         type: String,
         required: true
