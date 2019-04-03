@@ -2,37 +2,42 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
-    // user:{
-    //
-    // },
-    category:{
-        type:Schema.Types.ObjectId,
-        ref:'categories'
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'users'
     },
-    title:{
+    category: {
+        type: Schema.Types.ObjectId,
+        ref: 'categories'
+    },
+    title: {
         type: String,
         required: true
     },
-    status:{
+    status: {
         type: String,
         default: 'public'
     },
-    allowComments:{
+    allowComments: {
         type: Boolean,
         required: true
     },
-    body:{
+    body: {
         type: String,
         required: true
     },
-    file:{
+    file: {
         type: String
     },
-    date:{
+    date: {
         type: Date,
         default: Date.now()
-    }
+    },
+    comments: [{
+        type: Schema.Types.ObjectId,
+        ref: 'comments'
+    }]
 
 });
 
-module.exports = mongoose.model('posts',PostSchema);
+module.exports = mongoose.model('posts', PostSchema);

@@ -31,6 +31,15 @@
 <!-- Page Content -->
 <div class="container">
 
+    {{>home/form-msgs}}
+
+        {{#if errors}}
+            {{#each  errors}}
+                <div class="alert alert-danger">{{message}}</div>
+            {{/each}}
+
+        {{/if}}
+
     {{{body}}}
 
 </div>

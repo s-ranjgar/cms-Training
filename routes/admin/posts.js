@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const Post = require('../../models/Post');
 const Category = require('../../models/Category');
+const Comment = require('../../models/Comment');
 const {isEmpty} = require('../../helpers/upload-helper');
+const {userAuthenticated} = require('../../helpers/authentication');
 
-router.all('/*', (req, res, next) => {
+router.all('/*', userAuthenticated, (req, res, next) => {
     req.app.locals.layout = 'admin';
     next();
 });
@@ -13,6 +15,14 @@ router.get('/', (req, res) => {
     Post.find({}).populate('category').then(posts => {
 
         res.render('admin/posts', {posts: posts});
+
+    })
+});
+
+router.get('/my-posts', (req, res) => {
+    Post.find({user: req.user.id}).populate('category').then(posts => {
+
+        res.render('admin/posts/my-posts', {posts: posts});
 
     })
 });
@@ -62,6 +72,7 @@ router.post('/create', (req, res) => {
         }
 
         let newPost = new Post({
+            user: req.user.id,
             title: req.body.title,
             status: req.body.status,
             allowComments: allowComments,
@@ -101,6 +112,7 @@ router.put('/edit/:id', (req, res) => {
         if (req.body.allowComments) {
             allowComments = true;
         }
+        post.user = req.user.id;
         post.title = req.body.title;
         post.status = req.body.status;
         post.allowComments = allowComments;
@@ -120,15 +132,17 @@ router.put('/edit/:id', (req, res) => {
 
         post.save().then(updatedPost => {
             req.flash('success_message', `${updatedPost.title} was Updated Successfully`);
-            res.redirect('/admin/posts');
+            res.redirect('/admin/posts/my-posts');
         }).catch(err => res.status(400).send(`COULD NOT SAVE BECAUSE: ${err}`));
     });
 });
 
 router.delete('/:id', (req, res) => {
     Post.findByIdAndDelete(req.params.id).then(deletedPost => {
-        req.flash('success_message', `${deletedPost.title} was Deleted Successfully`);
-        res.redirect('/admin/posts');
+        Comment.deleteMany({_id: {$in: deletedPost.comments}}).then(deletedComments => {
+            req.flash('success_message', `${deletedPost.title} was Deleted Successfully`);
+            res.redirect('/admin/posts/my-posts');
+        });
     }).catch(err => res.status(400).send(`COULD NOT DELETE POST BECAUSE: ${err}`));
 });
 
