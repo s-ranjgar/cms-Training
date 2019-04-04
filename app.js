@@ -17,10 +17,10 @@ mongoose.connect(mongoDbUrl, {useNewUrlParser: true}).then(db => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-const {select,generateDate} = require('./helpers/handlebars-helpers');
+const {select,generateDate,paginate} = require('./helpers/handlebars-helpers');
 
 //Set View Engines
-app.engine('handlebars', exphbs({defaultLayout: 'home', helpers: {select: select, generateDate: generateDate}}));
+app.engine('handlebars', exphbs({defaultLayout: 'home', helpers: {select: select, generateDate: generateDate,paginate: paginate}}));
 app.set('view engine', 'handlebars');
 
 //Upload Middleware

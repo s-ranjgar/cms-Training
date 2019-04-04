@@ -15,9 +15,19 @@ router.all('/*', (req, res, next) => {
 router.get('/', (req, res) => {
 
     // res.send('it works');
-    Post.find({}).populate('user').then(posts => {
-        Category.find({}).then(categories => {
-            res.render('home/index', {posts: posts, categories: categories});
+    const perPage = 10;
+    const page = req.query.page || 1;
+
+    Post.find({}).skip((perPage * page) - perPage).limit(perPage).sort({date:-1}).populate('user').then(posts => {
+        Post.countDocuments({}).then(postCount => {
+            Category.find({}).then(categories => {
+                res.render('home/index', {
+                    posts: posts,
+                    categories: categories,
+                    current: parseInt(page),
+                    pages: Math.ceil(postCount / perPage)
+                });
+            });
         });
     });
 });
@@ -155,13 +165,13 @@ router.post('/register', (req, res) => {
 
 });
 
-router.get('/post/:id', (req, res) => {
+router.get('/post/:sulg', (req, res) => {
 
     // res.send('it works');
 
     //Populating Comments and User of each Comment with Post
-    Post.findOne({_id: req.params.id}).populate({
-        path: 'comments', match: {approveComment:true}, populate: {
+    Post.findOne({slug: req.params.slug}).populate({
+        path: 'comments', match: {approveComment: true}, populate: {
             path: 'user',
             model: 'users'
         }

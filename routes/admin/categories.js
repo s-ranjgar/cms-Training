@@ -33,7 +33,8 @@ router.post('/create', (req, res) => {
 
 
         let newCategory = new Category({
-            name: req.body.name
+            name: req.body.name,
+            user: req.user.id
         });
 
         newCategory.save().then(savedCategory => {
@@ -58,6 +59,7 @@ router.get('/edit/:id',(req,res)=>{
 router.put('/edit/:id',(req,res)=>{
    Category.findById(req.params.id).then(category=>{
        category.name=req.body.name;
+       category.user=req.user.id;
        category.save().then(updatedCategory=>{
            req.flash('success_message',`${updatedCategory.name} was Updated Successfully`);
            res.redirect('/admin/categories');

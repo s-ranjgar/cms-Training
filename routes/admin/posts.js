@@ -12,7 +12,7 @@ router.all('/*', userAuthenticated, (req, res, next) => {
 });
 
 router.get('/', (req, res) => {
-    Post.find({}).populate('category').then(posts => {
+    Post.find({}).sort({date:-1}).populate('category').then(posts => {
 
         res.render('admin/posts', {posts: posts});
 

@@ -20,12 +20,12 @@
     <tr>
         <td>{{id}}</td>
         <td><img height="50" class="img-responsive" src="/uploads/{{file}}" alt =""></td>
-        <td><a href="/post/{{id}}">{{title}}</a></td>
+        <td><a href="/post/{{slug}}">{{title}}</a></td>
         <td>{{category.name}}</td>
         <td>{{status}}</td>
         <td>{{allowComments}}</td>
         <td>{{generateDate date 'MMMM DD'}}</td>
-        <td><a href="/post/{{id}}" class="btn btn-info">View</a></td>
+        <td><a href="/post/{{slug}}" class="btn btn-info">View</a></td>
     </tr>
     {{/each}}
     </tbody>
